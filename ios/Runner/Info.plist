@@ -45,5 +45,26 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- ✅ Custom URL Scheme for deep linking -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.example.hotelorg</string> <!-- Replace with your actual bundle ID -->
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>googleapp</string> <!-- Custom scheme (change this as needed) -->
+			</array>
+		</dict>
+	</array>
+
+	<!-- ✅ Associated Domains for Universal Links -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:google.com</string> <!-- Replace with your actual domain -->
+	</array>
 </dict>
 </plist>

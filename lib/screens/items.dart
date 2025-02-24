@@ -1,88 +1,105 @@
-import 'package:flutter/material.dart';
+// // lib/screens/items.dart
 
-class BiryaniMenu extends StatefulWidget {
-  @override
-  _BiryaniMenuState createState() => _BiryaniMenuState();
-}
+// import 'package:flutter/material.dart';
+// import 'package:hotelorg/models/menu_model.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 
-class _BiryaniMenuState extends State<BiryaniMenu> {
-  bool showVeg = true;
-  bool showNonVeg = true;
+// class BiryaniMenu extends StatefulWidget {
+//   @override
+//   _BiryaniMenuState createState() => _BiryaniMenuState();
+// }
 
-  final List<Map<String, dynamic>> menuItems = [
-    {"name": "Veg Biryani", "price": 140, "veg": true},
-    {"name": "Paneer Biryani", "price": 160, "veg": true},
-    {"name": "Paneer Tikka Biryani", "price": 170, "veg": true},
-    {"name": "Chicken Fry Biryani", "price": 190, "veg": false},
-    {"name": "Chicken Dum Biryani", "price": 170, "veg": false},
-    {"name": "Chicken Lollipop Biryani", "price": 200, "veg": false},
-    {"name": "Spl Chicken Biryani", "price": 210, "veg": false},
-    {"name": "Naatu Kodi Biryani", "price": 240, "veg": true},
-    {"name": "Chitti Mutyala Pulao", "price": 0, "veg": false},
-  ];
+// class _BiryaniMenuState extends State<BiryaniMenu> {
+//   late Future<List<MenuCategory>> futureMenu;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Biryani Menu"),
-        backgroundColor: Colors.redAccent,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilterChip(
-                  label: Text("Veg"),
-                  selected: showVeg,
-                  onSelected: (bool value) {
-                    setState(() {
-                      showVeg = value;
-                    });
-                  },
-                  selectedColor: Colors.green.withOpacity(0.5),
-                ),
-                SizedBox(width: 10),
-                FilterChip(
-                  label: Text("Non-Veg"),
-                  selected: showNonVeg,
-                  onSelected: (bool value) {
-                    setState(() {
-                      showNonVeg = value;
-                    });
-                  },
-                  selectedColor: Colors.red.withOpacity(0.5),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: menuItems.length,
-              itemBuilder: (context, index) {
-                final item = menuItems[index];
-                if ((item['veg'] && showVeg) || (!item['veg'] && showNonVeg)) {
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.circle,
-                        color: item['veg'] ? Colors.green : Colors.red,
-                      ),
-                      title: Text(item['name']),
-                      trailing: Text("₹${item['price']}.00"),
-                    ),
-                  );
-                }
-                return SizedBox();
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   void initState() {
+//     super.initState();
+//     futureMenu = fetchMenuData();
+//   }
+
+//   Future<List<MenuCategory>> fetchMenuData() async {
+//     final url = Uri.parse("https://cb82-2401-4900-4cef-7df3-f9b3-a23-8df3-bb07.ngrok-free.app/menu/fetch-categories");
+
+//     try {
+//       print("Fetching data from API...");
+//       final response = await http.get(url, headers: {"Accept": "application/json"});
+
+//       print("Response Status Code: ${response.statusCode}");
+
+//       if (response.statusCode != 200) {
+//         throw Exception("API Error: ${response.statusCode}");
+//       }
+
+//       if (response.body.startsWith("<!DOCTYPE html>") || response.body.startsWith("<html>")) {
+//         print("⚠️ API returned HTML instead of JSON:\n${response.body}");
+//         throw Exception("Invalid JSON Response: API returned HTML.");
+//       }
+
+//       final List<dynamic> jsonData = jsonDecode(response.body);
+//       return jsonData.map((cat) => MenuCategory.fromJson(cat)).toList();
+//     } catch (e) {
+//       print("Error fetching data: $e");
+//       rethrow;
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("Biryani Menu"),
+//         backgroundColor: Colors.redAccent,
+//       ),
+//       body: FutureBuilder<List<MenuCategory>>(
+//         future: futureMenu,
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return Center(child: CircularProgressIndicator());
+//           } else if (snapshot.hasError) {
+//             return Center(
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text("Error loading menu!", style: TextStyle(color: Colors.red, fontSize: 18)),
+//                   SizedBox(height: 10),
+//                   Text(snapshot.error.toString(), textAlign: TextAlign.center),
+//                 ],
+//               ),
+//             );
+//           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//             return Center(child: Text("No menu data available."));
+//           }
+
+//           final menuCategories = snapshot.data!;
+
+//           return ListView.builder(
+//             itemCount: menuCategories.length,
+//             itemBuilder: (context, index) {
+//               final category = menuCategories[index];
+//               return ExpansionTile(
+//                 title: Text(category.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+//                 children: category.subCategories.map((subCat) {
+//                   return ExpansionTile(
+//                     title: Text(subCat.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+//                     children: subCat.items.map((item) {
+//                       return ListTile(
+//                         leading: Icon(Icons.circle, color: item.type == "veg" ? Colors.green : Colors.red),
+//                         title: Text(item.name),
+//                         trailing: Text(
+//                           item.inStock ? "₹${item.cost}" : "Out of Stock",
+//                           style: TextStyle(color: item.inStock ? Colors.black : Colors.red),
+//                         ),
+//                       );
+//                     }).toList(),
+//                   );
+//                 }).toList(),
+//               );
+//             },
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
