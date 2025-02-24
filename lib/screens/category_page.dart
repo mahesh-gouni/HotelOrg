@@ -1,49 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:hotelorg/screens/items.dart';
+import 'package:hotelorg/screens/sub_categories.dart';
 
-import 'package:hotelorg/screens/items.dart';  // Import the BiryaniMenu file
+class CategoryPage extends StatefulWidget {
+  @override
+  _CategoryPageState createState() => _CategoryPageState();
+}
 
-class CategoryPage extends StatelessWidget {
+class _CategoryPageState extends State<CategoryPage> {
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://e38c-2401-4900-4cef-7df3-9de4-4433-f8ef-cf35.ngrok-free.app/menu'));
+  List<Map<String, dynamic>> categories = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final response = await _dio.get('/fetch-categories-names');
+      setState(() {
+        categories = List<Map<String, dynamic>>.from(response.data);
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching categories: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("AG SPORTS - DESI DHABA"),
+        title: Text("KOI MANDI"),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: GridView.count(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 1.2,
-          children: [
-            categoryCard("Veg Soups", context),
-            categoryCard("Non-veg Soups", context),
-            categoryCard("Veg Starters", context),
-            categoryCard("Egg Starters", context),
-            categoryCard("Non-veg Starters", context),
-          ],
-        ),
-      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: EdgeInsets.all(10),
+              child: GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 1.2,
+                children: categories
+                    .map((category) => categoryCard(category, context))
+                    .toList(),
+              ),
+            ),
     );
   }
 
-  Widget categoryCard(String title, BuildContext context) {
+  Widget categoryCard(Map<String, dynamic> category, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == "Veg Soups") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BiryaniMenu()), // Navigate to BiryaniMenu
-          );
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubCategoryPage(
+              categoryId: category['id'],
+              categoryName: category['name'],
+            ),
+          ),
+        );
       },
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Center(
           child: Text(
-            title,
+            category['name'],
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),

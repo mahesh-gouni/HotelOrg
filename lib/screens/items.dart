@@ -1,88 +1,116 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 
 class BiryaniMenu extends StatefulWidget {
+  final int categoryId;
+  final String categoryName;
+
+  const BiryaniMenu({super.key, required this.categoryId, required this.categoryName});
+  
   @override
   _BiryaniMenuState createState() => _BiryaniMenuState();
 }
 
 class _BiryaniMenuState extends State<BiryaniMenu> {
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://e38c-2401-4900-4cef-7df3-9de4-4433-f8ef-cf35.ngrok-free.app/menu'));
   bool showVeg = true;
   bool showNonVeg = true;
+  List<Map<String, dynamic>> items = [];
+  bool isLoading = true;
 
-  final List<Map<String, dynamic>> menuItems = [
-    {"name": "Veg Biryani", "price": 140, "veg": true},
-    {"name": "Paneer Biryani", "price": 160, "veg": true},
-    {"name": "Paneer Tikka Biryani", "price": 170, "veg": true},
-    {"name": "Chicken Fry Biryani", "price": 190, "veg": false},
-    {"name": "Chicken Dum Biryani", "price": 170, "veg": false},
-    {"name": "Chicken Lollipop Biryani", "price": 200, "veg": false},
-    {"name": "Spl Chicken Biryani", "price": 210, "veg": false},
-    {"name": "Naatu Kodi Biryani", "price": 240, "veg": true},
-    {"name": "Chitti Mutyala Pulao", "price": 0, "veg": false},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchSubCategoryItems(widget.categoryId);
+  }
+
+  Future<void> fetchSubCategoryItems(int subCategoryId) async {
+  try {
+    final response = await _dio.get('/items/by-subcategory', queryParameters: {'subCategoryId': subCategoryId});
+    
+    print("API Response: ${response.data}"); // Debugging output
+    
+    setState(() {
+      items = List<Map<String, dynamic>>.from(response.data);
+      isLoading = false;
+    });
+
+    print("Items List Updated: $items"); // Debugging output
+
+  } catch (e) {
+    print("Error fetching items: $e");
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Biryani Menu"),
+        title: Text(widget.categoryName),
         backgroundColor: Colors.redAccent,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
               children: [
-                FilterChip(
-                  label: Text("Veg"),
-                  selected: showVeg,
-                  onSelected: (bool value) {
-                    setState(() {
-                      showVeg = value;
-                    });
-                  },
-                  selectedColor: Colors.green.withOpacity(0.5),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FilterChip(
+                        label: Text("Veg"),
+                        selected: showVeg,
+                        onSelected: (bool value) {
+                          setState(() {
+                            showVeg = value;
+                          });
+                        },
+                        selectedColor: Colors.green.withOpacity(0.5),
+                      ),
+                      SizedBox(width: 10),
+                      FilterChip(
+                        label: Text("Non-Veg"),
+                        selected: showNonVeg,
+                        onSelected: (bool value) {
+                          setState(() {
+                            showNonVeg = value;
+                          });
+                        },
+                        selectedColor: Colors.red.withOpacity(0.5),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(width: 10),
-                FilterChip(
-                  label: Text("Non-Veg"),
-                  selected: showNonVeg,
-                  onSelected: (bool value) {
-                    setState(() {
-                      showNonVeg = value;
-                    });
-                  },
-                  selectedColor: Colors.red.withOpacity(0.5),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      bool isVeg = item['type'].toLowerCase() == "veg";
+                      if ((isVeg && showVeg) || (!isVeg && showNonVeg)) {
+                        return Card(
+                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.circle,
+                              color: isVeg ? Colors.green : Colors.red,
+                            ),
+                            title: Text(item['name']),
+                            trailing: Text("₹${item['cost']}.00"),
+                          ),
+                        );
+                      }
+                      return SizedBox();
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: menuItems.length,
-              itemBuilder: (context, index) {
-                final item = menuItems[index];
-                if ((item['veg'] && showVeg) || (!item['veg'] && showNonVeg)) {
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.circle,
-                        color: item['veg'] ? Colors.green : Colors.red,
-                      ),
-                      title: Text(item['name']),
-                      trailing: Text("₹${item['price']}.00"),
-                    ),
-                  );
-                }
-                return SizedBox();
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

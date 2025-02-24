@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Text(
-              "AG SPORTS - DESI DHABA",
+              "KOI MANDI",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
     );
   },
   icon: Icon(Icons.shopping_cart),
-  label: Text("Order Now"),
+  label: Text("Menu Card"),
   style: ElevatedButton.styleFrom(
     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
     shape: RoundedRectangleBorder(
