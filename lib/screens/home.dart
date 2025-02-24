@@ -1,8 +1,8 @@
+// lib/screens/home_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:hotelorg/screens/category_page.dart';
-
-
-
+import 'package:hotelorg/utilites/qr_code_screen.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -28,10 +28,17 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text(
-              "Welcome",
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                MaterialPageRoute(builder: (context) => QRCodeScreen()),
+                );
+              },
+              icon: Icon(Icons.shopping_cart),
+              label: Text("Order Now"),
             ),
+<<<<<<< HEAD
             SizedBox(height: 20),
       ElevatedButton.icon(
   onPressed: () {
@@ -50,6 +57,8 @@ class HomePage extends StatelessWidget {
   ),
 ),
 
+=======
+>>>>>>> f23a634d54831f50520de900e73a5386b850ae21
           ],
         ),
       ),
