@@ -13,7 +13,7 @@ class SubCategoryPage extends StatefulWidget {
 }
 
 class _SubCategoryPageState extends State<SubCategoryPage> {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://e38c-2401-4900-4cef-7df3-9de4-4433-f8ef-cf35.ngrok-free.app/menu'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://d35b-2401-4900-4cef-727e-7d30-2a38-c3ff-5320.ngrok-free.app/menu'));
   List<Map<String, dynamic>> subCategories = [];
   List<Map<String, dynamic>> items = [];
   bool isLoading = true;
