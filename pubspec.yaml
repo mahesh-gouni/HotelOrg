@@ -17,12 +17,9 @@ dependencies:
 
   
   cupertino_icons: ^1.0.8
-<<<<<<< HEAD
   dio: ^5.3.2
-=======
   qr_flutter: ^4.1.0
   uni_links: ^0.5.1
->>>>>>> f23a634d54831f50520de900e73a5386b850ae21
 
 dev_dependencies:
   flutter_test:

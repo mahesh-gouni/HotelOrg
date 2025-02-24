@@ -38,7 +38,6 @@ class HomePage extends StatelessWidget {
               icon: Icon(Icons.shopping_cart),
               label: Text("Order Now"),
             ),
-<<<<<<< HEAD
             SizedBox(height: 20),
       ElevatedButton.icon(
   onPressed: () {
@@ -57,8 +56,6 @@ class HomePage extends StatelessWidget {
   ),
 ),
 
-=======
->>>>>>> f23a634d54831f50520de900e73a5386b850ae21
           ],
         ),
       ),
